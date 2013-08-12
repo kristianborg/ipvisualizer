@@ -3,42 +3,91 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <style type="text/css">
-        html { height: 100% }
-        body { height: 100%; margin: 0; padding: 0 }
-        #map-canvas { height: 100% }
+        html, body {
+        height: 100%;
+        margin: 0;
+        }
     </style>
+    <!--<script type="text/javascript" src="country_login.js"></script>-->
+    <script type="text/javascript" src="country_login_otp.js"></script>
+    <script type="text/javascript" src="coordinates.js"></script>
     <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQEhLRcmIWW01leXaylofxgG8TEOYa0KU&sensor=false">
-    </script>
-    <script type="text/javascript">
-        var geocoder;
+            src="https://maps.googleapis.com/maps/api/js?libraries=geometry,visualization&key=AIzaSyBQEhLRcmIWW01leXaylofxgG8TEOYa0KU&sensor=false"></script>
+
+
+    <script>
+
         var map;
+        var geocoder;
+
         function initialize() {
-            geocoder = new google.maps.Geocoder();
-            var latlng = new google.maps.LatLng(-34.397, 150.644);
             var mapOptions = {
-                zoom: 8,
-                center: latlng,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            }
-            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                zoom: 3,
+                center: new google.maps.LatLng(39.5, -30.5),
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            };
+
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+            geocoder = new google.maps.Geocoder();
+
+            getAllCoordinates();
+
+            setTimeout(writeHeatMap, 1000);
         }
 
-        function codeAddress() {
-            var address = document.getElementById("address").value;
-            geocoder.geocode( { 'address': address}, function(results, status) {
+        function writeHeatMap(){
+            alert('writeHeatMap called');
+            var heatmapData = [];
+            for (var i = 0; i < countrys.length; i++) {
+                var country = countrys[i];
+                var latLng = coordinates[country];
+                if(latLng != null && latLng != "temp" && country != "Netherlands" && country != null){
+                    heatmapData.push(new google.maps.LatLng(latLng.lat, latLng.lng));
+                }
+            }
+
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+                data: heatmapData,
+                dissipating: false,
+            map: map
+            });
+
+            serializeCoordinates()
+        }
+
+        function serializeCoordinates(){
+            document.write("var coordinates= {")
+            for(var country in coordinates){
+                document.write('"' + country + '" : { lat:' + coordinates[country].lat + ', lng:' + coordinates[country].lng + '}, <br>')
+            }
+            document.write("}");
+        }
+
+        function getAllCoordinates(){
+            for (var i = 0; i < countrys.length; i++) {
+                var country = countrys[i];
+                if(coordinates[country] == null){
+                    coordinates[country] = "temp";
+                    getCoordinates(country);
+                }
+            }
+        }
+
+        function getCoordinates(country){
+            alert('getting coordinates for unknown country ' + country);
+            geocoder.geocode( { 'address': 'country' + country}, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location
-                    });
+                    var latLng = results[0].geometry.location;
+                    coordinates[country] = {lat: latLng.lat(), lng: latLng.lng()};
+                    // alert('coordinates for ' + country + ': ' + latLng.lat() + ' ' + latLng.lng());
                 } else {
-                    alert("Geocode was not successful for the following reason: " + status);
+                    alert('Geocode was not successful for the following reason: ' + status + ' for country ' + country);
                 }
             });
         }
     </script>
 </head>
 <body onload="initialize()">
-<div id="map-canvas" style="width: 320px; height: 480px
+<div id="map-canvas" style="min-height: 100%;"></div>
+</body>
+</html>
