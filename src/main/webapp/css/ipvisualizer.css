@@ -6,3 +6,14 @@ html, body {
 #map-canvas {
     min-height: 100%;
 }
+
+#settings {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    left: 50%;
+    margin-left: -180px;
+    padding: 5px;
+    position: absolute;
+    top: 5px;
+    z-index: 5;
+}

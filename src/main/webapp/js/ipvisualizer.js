@@ -1,5 +1,8 @@
 var map;
 var geocoder;
+var heatmap;
+var markerCluster;
+var markers = [];
 var serializeCoordinates = false;
 
 function initialize() {
@@ -14,10 +17,18 @@ function initialize() {
 
     getAllCoordinates();
 
-    setTimeout(writeHeatMap, 1000);
+    setTimeout(drawLayers, 1000);
 }
 
-function writeHeatMap(){
+function drawLayers(){
+    drawHeatMap();
+    drawClusters();
+    if (serializeCoordinates) {
+        serializeCoordinates();
+    }
+}
+
+function drawHeatMap(){
     var heatmapData = [];
     for (var i = 0; i < countries.length; i++) {
         var country = countries[i];
@@ -27,15 +38,23 @@ function writeHeatMap(){
         }
     }
 
-    var heatmap = new google.maps.visualization.HeatmapLayer({
+    heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData,
         dissipating: false,
-    map: map
+        map: map
     });
+}
 
-    if (serializeCoordinates) {
-        serializeCoordinates();
+function drawClusters(){
+    for (var i = 0; i < countries.length; i++) {
+        var country = countries[i];
+        var latLng = coordinates[country];
+        if(latLng != null && latLng != "temp" && country != "Netherlands" && country != null){
+            markers.push(new google.maps.Marker({'position': new google.maps.LatLng(latLng.lat, latLng.lng)}));
+        }
     }
+
+    // markerCluster = new MarkerClusterer(map, markers);
 }
 
 function serializeCoordinates(){
@@ -68,6 +87,31 @@ function getCoordinates(country){
     });
 }
 
+function toggleHeatMap(){
+    heatmap.setMap(heatmap.getMap() ? null : map);
+}
+
+function toggleCluster(){
+    heatmap.setMap(heatmap.getMap() ? null : map);
+}
+
 function toggleSettings(){
     $(settings).toggle();
 }
+
+$(document).ready(function () {
+    $('#heatmap').change(function() {
+        if ($(this).is(':checked')) {
+            heatmap.setMap(map);
+        } else {
+            heatmap.setMap(null);
+        }
+    });
+    $('#cluster').change(function() {
+        if ($(this).is(':checked')) {
+            markerCluster = new MarkerClusterer(map, markers);
+        } else {
+            markerCluster.clearMarkers();
+        }
+    });
+});
