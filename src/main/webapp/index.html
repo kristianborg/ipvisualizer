@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/countries.js"></script>
+    <script type="text/javascript" src="js/coordinates.js"></script>
+    <script type="text/javascript" src="js/ipvisualizer.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=geometry,visualization&key=AIzaSyBQEhLRcmIWW01leXaylofxgG8TEOYa0KU&sensor=false"></script>
+
+    <link rel="stylesheet" href="css/ipvisualizer.css" type="text/css">
+</head>
+<body onload="initialize()">
+<div id="panel">
+    <button onclick="toggleSettings()">settings</button>
+    <div id="settings">
+        settings here
+    </div>
+</div>
+<div id="map-canvas"></div>
+</body>
+</html>

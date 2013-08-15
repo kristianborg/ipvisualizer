@@ -13,12 +13,12 @@
 
         <servlet-mapping>
             <servlet-name>ipconverter</servlet-name>
-            <url-pattern>/convert</url-pattern>
+            <url-pattern>/ip2country/*</url-pattern>
         </servlet-mapping>
 
     <!-- Default page to serve -->
     <welcome-file-list>
-        <welcome-file>html/index.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
 </web-app>
