@@ -22,24 +22,18 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.12</version>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
                     <webResources>
                         <resource>
-                            <directory>src/main/webapp</directory>
-                            <includes>
-                                <include>WEB-INF/lib/*.bin</include>
-                            </includes>
-                        </resource>
-                        <resource>
                             <directory>src/main/resources</directory>
                         </resource>
                     </webResources>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
@@ -66,6 +60,11 @@
             <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ip2c.jar</systemPath>
+        </dependency>
+        <dependency>
+        	<groupId>javax.servlet</groupId>
+        	<artifactId>servlet-api</artifactId>
+        	<version>2.5</version>
         </dependency>
     </dependencies>
 
