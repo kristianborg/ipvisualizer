@@ -41,8 +41,11 @@ function drawHeatMap(){
     heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData,
         dissipating: false,
-        map: map
     });
+
+    var showHeatMap = getParameterByName("heatmap") === "true";
+    toggleHeatMap(showHeatMap);
+    $('#heatmap').prop('checked', showHeatMap);
 }
 
 function drawClusters(){
@@ -54,7 +57,11 @@ function drawClusters(){
         }
     }
 
-    // markerCluster = new MarkerClusterer(map, markers);
+    var showCluster = getParameterByName("cluster") === "true";
+    $('#cluster').prop('checked', showCluster);
+    if (showCluster){
+        markerCluster = new MarkerClusterer(map, markers);
+    }
 }
 
 function serializeCoordinates(){
@@ -99,19 +106,35 @@ function toggleSettings(){
     $(settings).toggle();
 }
 
+// source: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function toggleHeatMap(show){
+    if(show){
+        heatmap.setMap(map);
+    } else {
+        heatmap.setMap(null);
+    }
+}
+
+function toggleCluster(show){
+    if(show){
+        markerCluster = new MarkerClusterer(map, markers);
+    } else {
+        markerCluster.clearMarkers();
+    }
+}
+
 $(document).ready(function () {
     $('#heatmap').change(function() {
-        if ($(this).is(':checked')) {
-            heatmap.setMap(map);
-        } else {
-            heatmap.setMap(null);
-        }
+        toggleHeatMap($(this).is(':checked'));
     });
     $('#cluster').change(function() {
-        if ($(this).is(':checked')) {
-            markerCluster = new MarkerClusterer(map, markers);
-        } else {
-            markerCluster.clearMarkers();
-        }
+        toggleCluster($(this).is(':checked'));
     });
 });
